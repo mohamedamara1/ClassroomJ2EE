@@ -1,0 +1,67 @@
+<!DOCTYPE web-app PUBLIC
+ "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN"
+ "http://java.sun.com/dtd/web-app_2_3.dtd" >
+
+<web-app>
+  <display-name>Archetype Created Web Application</display-name>
+  <servlet>
+  	<servlet-name>Welcome</servlet-name>
+  	<display-name>Welcome</display-name>
+  	<description></description>
+  	<servlet-class>test.Welcome</servlet-class>
+  </servlet>
+  <servlet>
+  	<servlet-name>Oauth2callback</servlet-name>
+  	<display-name>Oauth2callback</display-name>
+  	<description></description>
+  	<servlet-class>test.Oauth2callback</servlet-class>
+  </servlet>
+  <servlet>
+  	<servlet-name>AuthorizationServlet</servlet-name>
+  	<display-name>AuthorizationServlet</display-name>
+  	<description></description>
+  	<servlet-class>test.AuthorizationServlet</servlet-class>
+  </servlet>
+  <servlet>
+  	<servlet-name>AuthorizationCallbackServlet</servlet-name>
+  	<display-name>AuthorizationCallbackServlet</display-name>
+  	<description></description>
+  	<servlet-class>test.AuthorizationCallbackServlet</servlet-class>
+  </servlet>
+  <servlet>
+  	<servlet-name>RequestCredentials</servlet-name>
+  	<display-name>RequestCredentials</display-name>
+  	<description></description>
+  	<servlet-class>test.RequestCredentials</servlet-class>
+  </servlet>
+  <servlet>
+  	<servlet-name>DownloadFileServlet</servlet-name>
+  	<display-name>DownloadFileServlet</display-name>
+  	<description></description>
+  	<servlet-class>test.DownloadFileServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+  	<servlet-name>Welcome</servlet-name>
+  	<url-pattern>/Welcome</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+  	<servlet-name>Oauth2callback</servlet-name>
+  	<url-pattern>/Oauth2callback</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+  	<servlet-name>AuthorizationServlet</servlet-name>
+  	<url-pattern>/AuthorizationServlet</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+  	<servlet-name>AuthorizationCallbackServlet</servlet-name>
+  	<url-pattern>/AuthorizationCallbackServlet</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+  	<servlet-name>RequestCredentials</servlet-name>
+  	<url-pattern>/RequestCredentials</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+  	<servlet-name>DownloadFileServlet</servlet-name>
+  	<url-pattern>/DownloadFileServlet</url-pattern>
+  </servlet-mapping>
+</web-app>
