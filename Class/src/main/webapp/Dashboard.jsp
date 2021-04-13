@@ -14,10 +14,10 @@
 here you can execute many requests like showing classrom names
 <table>
   <c:forEach items="${courses}" var="course">
-   <tr>
+    <tr>
      <td>${course.getName()}</td>
      <td>${course.getId()}</td>
-</tr>
+	</tr>
   </c:forEach>
 </table>
 
