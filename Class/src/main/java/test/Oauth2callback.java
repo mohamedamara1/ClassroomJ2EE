@@ -101,9 +101,10 @@ public class Oauth2callback extends HttpServlet {
           for (Course course : courses){
           	System.out.println(course);
           } 
-	      // Redirect back to index
+          
        request.setAttribute("courses", courses);
 
+       
 	  //    response.sendRedirect("http://localhost:8080/Class/Dashboard.jsp");
 	      request.getRequestDispatcher("Dashboard.jsp").forward(request, response);
 
