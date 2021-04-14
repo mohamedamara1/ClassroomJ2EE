@@ -26,6 +26,5 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="lib" path="/home/med/Downloads/apache-tomcat-7.0.108/lib/servlet-api.jar"/>
-	<classpathentry kind="lib" path="/home/med/Downloads/db-derby-10.15.2.0-bin/lib/derbyclient.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>
