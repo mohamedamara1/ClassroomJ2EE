@@ -3,7 +3,7 @@
 <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@page isELIgnored="false"%>
 
-    
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -11,13 +11,14 @@
 <title>Dashboard</title>
 </head>
 <body>
-here you can execute many requests like showing classrom names
+here you can execute many requests like showing classrom names <br>
+<input type="checkbox" id="all"> all
 <table>
   <c:forEach items="${courses}" var="course">
     <tr>
+     <td><input type="checkbox" value="${course.getId()}" class ="classes"/> </td>
      <td>${course.getName()}</td>
-     <td>${course.getId()}</td>
-	</tr>
+    </tr>
   </c:forEach>
 </table>
 
@@ -25,6 +26,6 @@ here you can execute many requests like showing classrom names
     Enter Name: <input type="text" name="name" size="20">
     <input type="submit" value="Submit" />
 </form>
-
+<script src="js/script.js"></script>
 </body>
 </html>
