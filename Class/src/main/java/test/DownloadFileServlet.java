@@ -100,7 +100,7 @@ public class DownloadFileServlet extends HttpServlet {
         }
         
         try {
-			DbUtil.connectionToDerby();
+			DbUtil.connectionToMysql();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -117,6 +117,15 @@ public class DownloadFileServlet extends HttpServlet {
         try {
 			DbUtil.normalDbUsage();
 		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InstantiationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
