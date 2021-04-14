@@ -24,7 +24,7 @@ here you can execute many requests like showing classrom names <br>
     </tr>
   </c:forEach>
 </table>
-    <input type="button" value="Download" id="submit"/>
+    <input type="submit" value="Download" id="submit">
     
 </form>
 <script src="js/script.js"></script>
