@@ -1,6 +1,6 @@
-console.log("worked");
 document.getElementById("all").addEventListener("click",check1);
-var box=document.getElementsByClassName("classes");
+//var box=document.getElementsByClassName("classes");
+var box=document.getElementsByName("matieres")
 
 for (let i = 0; i < box.length; i++) 
 {
@@ -9,7 +9,7 @@ for (let i = 0; i < box.length; i++)
 function check1 ()
 { 
 
-    var box=document.getElementsByClassName("classes");
+    var box=document.getElementsByName("matieres");
     if ((document.getElementById("all").checked)==true)
     {for (let i = 0; i < box.length; i++) 
     {
@@ -24,3 +24,15 @@ function check2 ()
 {
     document.getElementById("all").checked=false;
 }
+
+$("#submit").click(function(e){
+
+    var number_of_checked_checkbox= $("input[name=matieres]:checked").length;
+    if(number_of_checked_checkbox==0){
+        alert("select any one");
+    }else{
+        $("#selection").submit();
+    }
+
+         });
+

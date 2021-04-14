@@ -86,9 +86,14 @@ public class DownloadFileServlet extends HttpServlet {
 		super.doPost(req, resp);
 		System.out.println("INSIDE POST METHOD OF DOWNLOADFILESERVLET");
 		
+        String[] selected_courses = req.getParameterValues("matieres");
+        
+        for(String s : selected_courses) {
+            System.out.println("Name : " + s);
+        }
 	//	in this part we extract a list of strings , strings of classroom_id 
 		
-        List<String> courses_to_download =  Arrays.asList("257955132266","234265883466");
+        List<String> courses_to_download =  Arrays.asList(selected_courses);
         
         List<String> existing_courses =  Arrays.asList("234265883466");
         

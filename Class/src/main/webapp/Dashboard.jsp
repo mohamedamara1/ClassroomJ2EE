@@ -12,19 +12,20 @@
 </head>
 <body>
 here you can execute many requests like showing classrom names <br>
+
+<form id="selection" action="DownloadFileServlet" method="post">
+
 <input type="checkbox" id="all"> all
 <table>
   <c:forEach items="${courses}" var="course">
     <tr>
-     <td><input type="checkbox" value="${course.getId()}" class ="classes"/> </td>
+     <td><input name="matieres" type="checkbox" value="${course.getId()}" > </td>
      <td>${course.getName()}</td>
     </tr>
   </c:forEach>
 </table>
-
-<form action="DownloadFileServlet" method="post">
-    Enter Name: <input type="text" name="name" size="20">
-    <input type="submit" value="Submit" />
+    <input type="button" value="Download" id="submit"/>
+    
 </form>
 <script src="js/script.js"></script>
 </body>
