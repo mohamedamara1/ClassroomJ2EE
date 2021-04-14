@@ -25,14 +25,4 @@ function check2 ()
     document.getElementById("all").checked=false;
 }
 
-$("#submit").click(function(e){
-
-    var number_of_checked_checkbox= $("input[name=matieres]:checked").length;
-    if(number_of_checked_checkbox==0){
-        alert("select any one");
-    }else{
-        $("#selection").submit();
-    }
-
-         });
 
