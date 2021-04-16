@@ -1,12 +1,19 @@
 package test;
 
 import java.io.IOException;
+import java.util.List;
+
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.google.api.client.auth.oauth2.Credential;
+import com.google.api.client.http.javanet.NetHttpTransport;
+import com.google.api.client.json.gson.GsonFactory;
+import com.google.api.services.classroom.Classroom;
+import com.google.api.services.classroom.model.Course;
+import com.google.api.services.classroom.model.ListCoursesResponse;
 
 /**
  * Servlet implementation class Welcome
@@ -40,9 +47,20 @@ public class Welcome extends HttpServlet {
 				response.setHeader("Content-type", "text/html;charset=UTF-8");
 				response.setCharacterEncoding("UTF-8");
 				response.getWriter().append("!!!Credentials are already obtained!!!<br/>");
+			
+		        Classroom service = new Classroom.Builder(new NetHttpTransport(), new GsonFactory(), credential)
+		                .setApplicationName("testing haha")
+		                .build();
+		        System.out.println("SERVICE : " + service);
+		        
+	          ListCoursesResponse reponse_list = service.courses().list().execute();
+	          List<Course> courses = reponse_list.getCourses();
+	          
+	          for (Course course : courses){
+	          	System.out.println(course);
+	          } 
 				response.sendRedirect("/Class/Dashboard.jsp");
 
-				
 			} else {
 				System.out.println("creds = null, redirecting to Authorization Servlet");
 				response.sendRedirect("/Class/AuthorizationServlet");
