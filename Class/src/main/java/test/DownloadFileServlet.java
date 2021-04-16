@@ -20,8 +20,10 @@ import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.gson.GsonFactory;
 import com.google.api.services.classroom.Classroom;
+import com.google.api.services.classroom.model.Announcement;
 import com.google.api.services.classroom.model.Course;
 import com.google.api.services.classroom.model.CourseWork;
+import com.google.api.services.classroom.model.ListAnnouncementsResponse;
 import com.google.api.services.classroom.model.ListCourseWorkResponse;
 import com.google.api.services.classroom.model.Material;
 import com.google.api.services.drive.Drive;
@@ -92,55 +94,42 @@ public class DownloadFileServlet extends HttpServlet {
             System.out.println("Name : " + s);
         }
 	//	in this part we extract a list of strings , strings of classroom_id 
+        
+        
 		
         List<String> courses_to_download =  Arrays.asList(selected_courses);
         
-        List<String> existing_courses =  Arrays.asList("234265883466");
-        
+        List<String> existing_courses = Arrays.asList();
+		try {
+			existing_courses = DbUtil.get_existing_courses();
+		} catch (InstantiationException | IllegalAccessException | ClassNotFoundException | SQLException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		System.out.println("courses to download "+courses_to_download);
+		System.out.println("existing courses  = " + existing_courses);
+
         for( String course : courses_to_download) {
-        	if (! existing_courses.contains(course) ) {
+        	System.out.println(course);
+        	if ( !existing_courses.contains(course) ) {
         		initial_download_course(course);
         		
         	}
+        	else {
+        		System.out.println("CLASSROOM ALREADY EXISTS ON SERVER "+course);
+        	}
         }
         
-        try {
-			DbUtil.connectionToMysql();
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (InstantiationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IllegalAccessException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-        try {
-			DbUtil.normalDbUsage();
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (InstantiationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IllegalAccessException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+        //download courses on server finished here, now we prepare the ZIP file
+  
+		
         
 
         
 
 	}
 
-	private void initial_download_course(String course_id) throws IOException, ServletException {
+	 void initial_download_course(String course_id) throws IOException, ServletException {
 		
 		// TODO Auto-generated method stub
 		Credential credential = InitializeFlowTool.initializeFlow().loadCredential("123456");
@@ -149,6 +138,8 @@ public class DownloadFileServlet extends HttpServlet {
         Classroom service = new Classroom.Builder(new NetHttpTransport(), new GsonFactory(), credential)
                 .setApplicationName("testing haha")
                 .build();
+        System.out.println("Course id : "+course_id);
+        
 		Course course = service.courses().get(course_id).execute();
 		
 		String path = "/home/med/eclipse-workspace/Class/src/main/resources/classrooms/"+course.getName().replaceAll(" ", "");
@@ -162,6 +153,17 @@ public class DownloadFileServlet extends HttpServlet {
 		System.out.println("New course folder created : "+course.getName().replaceAll(" ", ""));
 		
 
+        ListAnnouncementsResponse announcements_reponse = service.courses().announcements().list(course_id).execute();
+        List<Announcement> announcements = announcements_reponse.getAnnouncements();
+        System.out.println("Downloading announcements of "+course.getName());
+        try{
+               download_announcements(announcements, course.getName());
+        }
+        catch(NullPointerException e){
+                System.out.println("This Course does't have any announcements!");
+        }
+		
+		
         ListCourseWorkResponse works_response = service.courses().courseWork().list(course_id).execute();
         List<CourseWork> works = works_response.getCourseWork();
 		
@@ -172,11 +174,55 @@ public class DownloadFileServlet extends HttpServlet {
 	    catch (NullPointerException e){
 	            System.out.println("this course doesn't have any work!");
 	    }
-
+        
+        
+//dont forget to add the classroom_id to existing courses on database after downloading
 		
+        try {
+			DbUtil.insert_classroom(course.getId(), course.getName());
+			
+		} catch (InstantiationException | IllegalAccessException | ClassNotFoundException | SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+        
 	}
+     public void download_announcements(List<Announcement> announcements, String course_name) throws NullPointerException, IOException, ServletException{
 
-	private void download_works(List<CourseWork> works, String course_name) throws IOException, ServletException {
+ 		System.out.println("Downloading course work...");
+ 		String path = "/home/med/eclipse-workspace/Class/src/main/resources/classrooms/"+course_name.replaceAll(" ", "")+"/Cours";
+ 		Credential credential = InitializeFlowTool.initializeFlow().loadCredential("123456");
+
+         Drive drive_service = new Drive.Builder(new NetHttpTransport(), new GsonFactory(), credential)
+                 .setApplicationName("testing haha")
+                 .build();
+         for (Announcement announcement : announcements){
+                 List<Material> materials = announcement.getMaterials();
+
+                 try{
+                         for (Material material : materials){
+                                 String file_id = material.getDriveFile().getDriveFile().getId();
+                                 String file_name = material.getDriveFile().getDriveFile().getTitle();
+                                 if (verif(file_name)) {
+                                 	System.out.println("Downloading : "+file_name);
+                                         try{
+     										file_download(file_id, file_name, path, drive_service);
+                                            //   downloads.add(file_name);
+                                         }
+                                         catch(IOException e) {
+                                         e.printStackTrace();
+                                         }
+                         		}
+                                 else {
+                                 	System.out.println("Extension not supported " + file_name);
+                                 }
+                         }
+                 }
+                 catch(NullPointerException e){
+                 }
+         }
+ }
+	private  void download_works(List<CourseWork> works, String course_name) throws IOException, ServletException {
 		// TODO Auto-generated method stub
 		System.out.println("Downloading course work...");
 		String path = "/home/med/eclipse-workspace/Class/src/main/resources/classrooms/"+course_name.replaceAll(" ", "")+"/TD+TP";
@@ -217,10 +263,9 @@ public class DownloadFileServlet extends HttpServlet {
 		
 	}
 
-	private void file_download(String file_id, String file_name, String path, Drive drive_service) throws IOException {
-		System.out.println("Inside file_download method, downloading file!!");
+	private  void file_download(String file_id, String file_name, String path, Drive drive_service) throws IOException {
+		System.out.println("Downloading "+file_name);
 		// TODO Auto-generated method stub
-		System.out.println(path+"/"+file_name);
 		FileOutputStream outputstream = new FileOutputStream(path+"/"+file_name);
 
 
@@ -233,7 +278,7 @@ public class DownloadFileServlet extends HttpServlet {
 		outputstream.flush();
 		outputstream.close();
 	}
-    private boolean verif(String file_name){
+    private  boolean verif(String file_name){
         String extension = file_name.substring(file_name.lastIndexOf(".") + 1);
         List<String> extensions = Arrays.asList("pdf", "docx", "pptx", "png", "jpg", "html", "css", "js", "java",
 "class", "txt", "r", "m", "sql", "doc", "mp3", "rar", "zip");

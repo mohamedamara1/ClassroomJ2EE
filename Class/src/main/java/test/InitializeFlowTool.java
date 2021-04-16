@@ -21,6 +21,8 @@ import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.gson.GsonFactory;
 import com.google.api.client.util.store.FileDataStoreFactory;
 import com.google.api.services.classroom.Classroom;
+import com.google.api.services.classroom.ClassroomScopes;
+import com.google.api.services.drive.DriveScopes;
 
 public class InitializeFlowTool {
 	
@@ -47,10 +49,12 @@ public class InitializeFlowTool {
      * If modifying these scopes, delete your previously saved credentials
      * at ~/.credentials/drive-java-quickstart
      */
-    private static final List<String> SCOPES = Arrays.asList("https://www.googleapis.com/auth/classroom.courses.readonly",
-    		"https://www.googleapis.com/auth/classroom.coursework.me",
-    		"https://www.googleapis.com/auth/classroom.rosters.readonly",
-    		"https://www.googleapis.com/auth/drive"	);
+    private static final List<String> SCOPES = Arrays.asList( 
+    		ClassroomScopes.CLASSROOM_COURSES, //https://www.googleapis.com/auth/admin.directory.group\n"
+    	    ClassroomScopes.CLASSROOM_ANNOUNCEMENTS,
+    	    ClassroomScopes.CLASSROOM_COURSEWORK_ME_READONLY,
+    	    ClassroomScopes.CLASSROOM_ROSTERS,
+    	    DriveScopes.DRIVE);
 
 
     static {

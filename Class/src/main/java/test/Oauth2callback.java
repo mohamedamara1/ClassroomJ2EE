@@ -1,6 +1,10 @@
 package test;
 
 import java.io.IOException;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 
 import javax.servlet.ServletException;
@@ -90,23 +94,44 @@ public class Oauth2callback extends HttpServlet {
 	      System.out.println("CRED expires in: "+credential.getExpiresInSeconds());
 	        
 	      
-	        Classroom service = new Classroom.Builder(new NetHttpTransport(), new GsonFactory(), credential)
+	      Classroom service = new Classroom.Builder(new NetHttpTransport(), new GsonFactory(), credential)
 	                .setApplicationName("testing haha")
 	                .build();
 	        System.out.println("SERVICE : " + service);
 	        
           ListCoursesResponse reponse_list = service.courses().list().execute();
           List<Course> courses = reponse_list.getCourses();
+    /*      
+        //  List<String> user_courses =  Arrays.asList();
           
-          for (Course course : courses){
-          	System.out.println(course);
-          } 
+          List<String> user_courses = new LinkedList<String>();
+
           
-       request.setAttribute("courses", courses);
+          for (Course course : courses) {
+        	  user_courses.add(course.getId());
+          }
+          
+          List<String> existing_courses = Arrays.asList("234265883466");
+  		try {
+  			existing_courses = DbUtil.get_existing_courses();
+  			System.out.println("existing courses inside try = " + existing_courses);
+  		} catch (InstantiationException | IllegalAccessException | ClassNotFoundException | SQLException e1) {
+  			// TODO Auto-generated catch block
+  			e1.printStackTrace();
+  		}
+        */
+  		request.setAttribute("courses", courses);
+	      request.getRequestDispatcher("Dashboard.jsp").forward(request, response);
+
+         /* for( String course : user_courses) {
+          	if (! existing_courses.contains(course) ) {
+          		DownloadFileServlet.initial_download_course(course);
+          		
+          	}
+          }*/
 
        
 	  //    response.sendRedirect("http://localhost:8080/Class/Dashboard.jsp");
-	      request.getRequestDispatcher("Dashboard.jsp").forward(request, response);
 
 	      return;
 	}
