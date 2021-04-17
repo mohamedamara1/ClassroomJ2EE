@@ -43,7 +43,6 @@ public class Welcome extends HttpServlet {
 			System.out.println("request credentials starting!!!");
 			Credential credential = InitializeFlowTool.getValidCredential(this.getUserId(request));
 			if (credential != null) {
-				System.out.println(credential.getExpiresInSeconds());
 				response.setHeader("Content-type", "text/html;charset=UTF-8");
 				response.setCharacterEncoding("UTF-8");
 				response.getWriter().append("!!!Credentials are already obtained!!!<br/>");
@@ -51,7 +50,6 @@ public class Welcome extends HttpServlet {
 		        Classroom service = new Classroom.Builder(new NetHttpTransport(), new GsonFactory(), credential)
 		                .setApplicationName("testing haha")
 		                .build();
-		        System.out.println("SERVICE : " + service);
 		        
 	          ListCoursesResponse reponse_list = service.courses().list().execute();
 	          List<Course> courses = reponse_list.getCourses();

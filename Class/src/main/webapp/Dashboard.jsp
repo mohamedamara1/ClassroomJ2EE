@@ -7,26 +7,56 @@
 <!DOCTYPE html>
 <html>
 <head>
+<link rel="stylesheet" type="text/css" href="./css/bootstrap.css">
+
 <meta charset="UTF-8">
 <title>Dashboard</title>
 </head>
 <body>
-here you can execute many requests like showing classrom names <br>
 
-<form id="selection" action="DownloadFileServlet" method="post">
+<div class="container-fluid bg-light">
+	<div class="row bg-dark">
+		<p>here you can execute many requests like showing classrom names </p>
+	
+	</div>
 
-<input type="checkbox" id="all"> all
-<table>
-  <c:forEach items="${courses}" var="course">
-    <tr>
-     <td><input name="matieres" type="checkbox" value="${course.getId()}" > </td>
-     <td>${course.getName()}</td>
-    </tr>
-  </c:forEach>
-</table>
-    <input type="submit" value="Download" id="submit">
-    
-</form>
-<script src="js/script.js"></script>
+	<div class="row ">
+			<div class="col-7">
+				<div class=container bg-success">
+						<form class="form-inline row" id="selection" action="DownloadFileServlet" method="post">
+						
+						<div class="offset-4 col-4 ">
+							<input  type="checkbox" id="all"> 
+						  	<label for="all" class="form-check-label">Select all</label>
+
+						</div>
+						<div class="row mt-3">
+							  <c:forEach items="${courses}" var="course">
+							  <div class="col-md-6">
+						  
+						  		<input name="matieres" type="checkbox" class="form-check-input" value="${course.getId()}" id="${course.getId()}">
+						  		<label for="${course.getId()}" class="form-check-label">${course.getName()}</label>
+						  		
+							  </div>
+	
+							  </c:forEach>					
+						</div>
+						
+						<div class="row mt-3">
+							<input class="offset-4 col-md-4" type="submit" value="Download" id="submit">
+							
+						</div>
+
+						    
+						</form>
+				
+				</div>
+
+			</div>
+	</div>
+
+</div>
+<script src="./js/script.js"></script>
+
 </body>
 </html>

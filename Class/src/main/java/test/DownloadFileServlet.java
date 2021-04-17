@@ -87,6 +87,7 @@ public class DownloadFileServlet extends HttpServlet {
 		// TODO Auto-generated method stub
 		super.doPost(req, resp);
 		System.out.println("INSIDE POST METHOD OF DOWNLOADFILESERVLET");
+
 		
         String[] selected_courses = req.getParameterValues("matieres");
         
@@ -112,7 +113,7 @@ public class DownloadFileServlet extends HttpServlet {
         for( String course : courses_to_download) {
         	System.out.println(course);
         	if ( !existing_courses.contains(course) ) {
-        		initial_download_course(course);
+        		initial_download_course(course, req);
         		
         	}
         	else {
@@ -129,15 +130,16 @@ public class DownloadFileServlet extends HttpServlet {
 
 	}
 
-	 void initial_download_course(String course_id) throws IOException, ServletException {
+	 void initial_download_course(String course_id, HttpServletRequest req ) throws IOException, ServletException {
 		
 		// TODO Auto-generated method stub
-		Credential credential = InitializeFlowTool.initializeFlow().loadCredential("123456");
+		Credential credential = InitializeFlowTool.getValidCredential(AuthorizationServlet.getId(req));
 
-        System.out.println("CREDENTIAL = "+ credential);
         Classroom service = new Classroom.Builder(new NetHttpTransport(), new GsonFactory(), credential)
                 .setApplicationName("testing haha")
                 .build();
+	//      System.out.println("AUTHENTICATED USER IS A TEACHER : " +Oauth2callback.isTeacher(service));
+
         System.out.println("Course id : "+course_id);
         
 		Course course = service.courses().get(course_id).execute();
@@ -157,7 +159,7 @@ public class DownloadFileServlet extends HttpServlet {
         List<Announcement> announcements = announcements_reponse.getAnnouncements();
         System.out.println("Downloading announcements of "+course.getName());
         try{
-               download_announcements(announcements, course.getName());
+               download_announcements(announcements, course.getName(), credential);
         }
         catch(NullPointerException e){
                 System.out.println("This Course does't have any announcements!");
@@ -168,7 +170,7 @@ public class DownloadFileServlet extends HttpServlet {
         List<CourseWork> works = works_response.getCourseWork();
 		
         try{
-           download_works(works, course.getName());
+           download_works(works, course.getName(), credential);
 	    }
 	
 	    catch (NullPointerException e){
@@ -187,11 +189,10 @@ public class DownloadFileServlet extends HttpServlet {
 		}
         
 	}
-     public void download_announcements(List<Announcement> announcements, String course_name) throws NullPointerException, IOException, ServletException{
+     public void download_announcements(List<Announcement> announcements, String course_name, Credential credential) throws NullPointerException, IOException, ServletException{
 
  		System.out.println("Downloading course work...");
  		String path = "/home/med/eclipse-workspace/Class/src/main/resources/classrooms/"+course_name.replaceAll(" ", "")+"/Cours";
- 		Credential credential = InitializeFlowTool.initializeFlow().loadCredential("123456");
 
          Drive drive_service = new Drive.Builder(new NetHttpTransport(), new GsonFactory(), credential)
                  .setApplicationName("testing haha")
@@ -222,11 +223,11 @@ public class DownloadFileServlet extends HttpServlet {
                  }
          }
  }
-	private  void download_works(List<CourseWork> works, String course_name) throws IOException, ServletException {
+	private  void download_works(List<CourseWork> works, String course_name, Credential credential) throws IOException, ServletException {
 		// TODO Auto-generated method stub
 		System.out.println("Downloading course work...");
 		String path = "/home/med/eclipse-workspace/Class/src/main/resources/classrooms/"+course_name.replaceAll(" ", "")+"/TD+TP";
-		Credential credential = InitializeFlowTool.initializeFlow().loadCredential("123456");
+	//	Credential credential = InitializeFlowTool.initializeFlow().loadCredential("123456");
 
         Drive drive_service = new Drive.Builder(new NetHttpTransport(), new GsonFactory(), credential)
                 .setApplicationName("testing haha")

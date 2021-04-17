@@ -67,11 +67,17 @@ public class AuthorizationServlet extends AbstractAuthorizationCodeServlet {
 	   *
 	   * @return string user id or null if no one is logged in
 	   */
-	  public String getUserId(HttpServletRequest request) {
+	  public  String getUserId(HttpServletRequest request) {
 	    HttpSession session = request.getSession();
-	    return "123456";
+	    System.out.println("PRITING USEEEER ID HEEEEEEEE " +(String) session.getAttribute("userId"));
+	    return (String) session.getAttribute("userId");
 	  }
-
+	  
+	  public static String getId(HttpServletRequest request) {
+		    HttpSession session = request.getSession();
+		    System.out.println("PRITING USEEEER ID HEEEEEEEE " +(String) session.getAttribute("userId"));
+		    return (String) session.getAttribute("userId");
+		  }
 	  public static void setUserId(HttpServletRequest request, String userId) {
 	    HttpSession session = request.getSession();
 	    session.setAttribute("userId", userId);
@@ -89,7 +95,6 @@ public class AuthorizationServlet extends AbstractAuthorizationCodeServlet {
 		Credential credential = InitializeFlowTool.getValidCredential(this.getUserId(req));
 		if (credential != null) {
 			
-			System.out.println("request credentials start!!!");
 			AuthorizationCodeFlow flow = InitializeFlowTool.initializeFlow();
 			
 			  GenericUrl url =
@@ -97,7 +102,6 @@ public class AuthorizationServlet extends AbstractAuthorizationCodeServlet {
 				    resp.sendRedirect(url.build());
 			
 		//	this.service(req, resp);
-			System.out.println("request credentials end!!!");	
 			
 			
 		}
