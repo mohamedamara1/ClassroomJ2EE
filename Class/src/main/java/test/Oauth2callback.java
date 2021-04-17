@@ -24,6 +24,7 @@ import com.google.api.client.json.gson.GsonFactory;
 import com.google.api.services.classroom.Classroom;
 import com.google.api.services.classroom.model.Course;
 import com.google.api.services.classroom.model.ListCoursesResponse;
+import com.google.api.services.classroom.model.UserProfile;
 
 
 
@@ -65,14 +66,13 @@ public class Oauth2callback extends HttpServlet {
 		              .setRedirectUri(InitializeFlowTool.getREDIRECT_URI()).execute();
         System.out.println("Access token: " + tokenResponse.getAccessToken());
 
-	   System.out.println(((GoogleTokenResponse) tokenResponse).getIdToken());
-		String userId = "123456";
+	//	String userId = "123456";
 	    // Extract the Google User ID from the ID token in the auth response
-      System.out.println("Code exchange worked. User " + userId + " logged in.");
+  //    System.out.println("Code exchange worked. User " + userId + " logged in.");
 
 	      // Set it into the session
-	      AuthorizationServlet.setUserId(request, userId);
-	      flow.createAndStoreCredential(tokenResponse, userId);
+	//      AuthorizationServlet.setUserId(request, userId);
+	//      flow.createAndStoreCredential(tokenResponse, userId);
 	      
 	      System.out.println("token saved and user id saved");
 	      
@@ -89,18 +89,31 @@ public class Oauth2callback extends HttpServlet {
 	    		  .build()
 	    		  .setFromTokenResponse(tokenResponse);
 	     System.out.println(credential);
-	      System.out.println(tokenResponse.getScope());
 	      
-	      System.out.println("CRED expires in: "+credential.getExpiresInSeconds());
+	 //     System.out.println("CRED expires in: "+credential.getExpiresInSeconds());
 	        
 	      
 	      Classroom service = new Classroom.Builder(new NetHttpTransport(), new GsonFactory(), credential)
 	                .setApplicationName("testing haha")
 	                .build();
-	        System.out.println("SERVICE : " + service);
+	      
+	   //    System.out.println("SERVICE : " + service);
+	       
+	//        System.out.println("AUTHENTICATED USER IS A TEACHER : " +isTeacher(service));
+	      
+	      
+	      String userId = getUserid(service);
+	      System.out.println("USER ID :"+userId);
+	      AuthorizationServlet.setUserId(request, userId);
+	      flow.createAndStoreCredential(tokenResponse, userId);
+	      
+	        
 	        
           ListCoursesResponse reponse_list = service.courses().list().execute();
           List<Course> courses = reponse_list.getCourses();
+          
+    		request.setAttribute("courses", courses);
+  	      request.getRequestDispatcher("Dashboard.jsp").forward(request, response);
     /*      
         //  List<String> user_courses =  Arrays.asList();
           
@@ -120,8 +133,7 @@ public class Oauth2callback extends HttpServlet {
   			e1.printStackTrace();
   		}
         */
-  		request.setAttribute("courses", courses);
-	      request.getRequestDispatcher("Dashboard.jsp").forward(request, response);
+
 
          /* for( String course : user_courses) {
           	if (! existing_courses.contains(course) ) {
@@ -135,13 +147,27 @@ public class Oauth2callback extends HttpServlet {
 
 	      return;
 	}
-
-	/**
+	
+	/*
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
 		doGet(request, response);
 	}
+	
+	static boolean isTeacher(Classroom service) throws IOException {
+		UserProfile user = service.userProfiles().get("me").execute();
+		System.out.println(user);
+		return user.getVerifiedTeacher();
+	}
+	
+	static String getUserid(Classroom service) throws IOException {
+		UserProfile user = service.userProfiles().get("me").execute();
+
+		return user.getId();
+		
+	}
+	
 
 }
