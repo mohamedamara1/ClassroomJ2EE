@@ -22,9 +22,15 @@ import com.google.api.client.http.BasicAuthentication;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.gson.GsonFactory;
 import com.google.api.services.classroom.Classroom;
+import com.google.api.services.classroom.model.Announcement;
 import com.google.api.services.classroom.model.Course;
+import com.google.api.services.classroom.model.CourseWork;
+import com.google.api.services.classroom.model.ListAnnouncementsResponse;
+import com.google.api.services.classroom.model.ListCourseWorkResponse;
 import com.google.api.services.classroom.model.ListCoursesResponse;
+import com.google.api.services.classroom.model.Material;
 import com.google.api.services.classroom.model.UserProfile;
+import com.google.api.services.drive.Drive;
 
 
 
@@ -97,6 +103,10 @@ public class Oauth2callback extends HttpServlet {
 	                .setApplicationName("testing haha")
 	                .build();
 	      
+
+	      Drive drive_service = new Drive.Builder(new NetHttpTransport(), new GsonFactory(), credential)
+	                 .setApplicationName("testing haha")
+	                 .build();
 	   //    System.out.println("SERVICE : " + service);
 	       
 	//        System.out.println("AUTHENTICATED USER IS A TEACHER : " +isTeacher(service));
@@ -114,60 +124,135 @@ public class Oauth2callback extends HttpServlet {
           
     		request.setAttribute("courses", courses);
   	      request.getRequestDispatcher("Dashboard.jsp").forward(request, response);
-    /*      
-        //  List<String> user_courses =  Arrays.asList();
-          
-          List<String> user_courses = new LinkedList<String>();
+  	      
 
-          
-          for (Course course : courses) {
-        	  user_courses.add(course.getId());
-          }
-          
-          List<String> existing_courses = Arrays.asList("234265883466");
-  		try {
-  			existing_courses = DbUtil.get_existing_courses();
-  			System.out.println("existing courses inside try = " + existing_courses);
-  		} catch (InstantiationException | IllegalAccessException | ClassNotFoundException | SQLException e1) {
-  			// TODO Auto-generated catch block
-  			e1.printStackTrace();
-  		}
-        */
-
-
-         /* for( String course : user_courses) {
-          	if (! existing_courses.contains(course) ) {
-          		DownloadFileServlet.initial_download_course(course);
-          		
-          	}
-          }*/
+	  	     
+	  	     //UPDATE FUNCTION THAT NEEDS A FUNCTION THAT TELLS HER WHAT ARE THE EXISTING FILES ON GOOGLE SERVERS
+  	   
+  	      
+  	      	update_db(service, courses, drive_service);
+        System.out.println("CALLED UPDATE FUNCTION");
 
        
-	  //    response.sendRedirect("http://localhost:8080/Class/Dashboard.jsp");
-
 	      return;
 	}
 	
-	/*
-	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
-	 */
+	
+	
+	
+	
+
+
+	
+	protected static void update_db(Classroom service, List<Course> courses, Drive drive_service) throws IOException {
+		
+		   List<String> existing_courses = Arrays.asList();
+			try {
+				existing_courses = DbUtil.get_existing_courses();
+			} catch (InstantiationException | IllegalAccessException | ClassNotFoundException | SQLException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+			
+ 	     for (Course course : courses) {
+  	    	 
+         	if ( existing_courses.contains(course.getId()) ) {
+         		System.out.println("*******UPdating "+course.getName());
+   
+        		
+        	
+         	
+	  	        ListAnnouncementsResponse announcements_reponse = service.courses().announcements().list(course.getId()).execute();
+	  	        List<Announcement> announcements = announcements_reponse.getAnnouncements();
+  			String cours_path = "/home/med/eclipse-workspace/Class/src/main/resources/classrooms/"+course.getName().replaceAll(" ", "")+"/Cours";
+
+  			
+	  	        
+	  	        ListCourseWorkResponse works_response = service.courses().courseWork().list(course.getId()).execute();
+	  	        List<CourseWork> works = works_response.getCourseWork(); 
+  			String work_path = "/home/med/eclipse-workspace/Class/src/main/resources/classrooms/"+course.getName().replaceAll(" ", "")+"/TD+TP";
+
+  			
+	  	        try {
+					for (Announcement annonc : announcements) {
+
+					     List<Material> materials = annonc.getMaterials();
+					     
+						 boolean skip = false;
+
+
+					     try{
+					    	 
+					             for (Material material : materials){
+					                     String file_id = material.getDriveFile().getDriveFile().getId();
+					                     String file_name = material.getDriveFile().getDriveFile().getTitle();
+					                     if (DownloadFileServlet.verif(file_name)) {
+					                    	 
+					     	  	        	try {
+					    						if (! DbUtil.check_file(annonc.getId(), course.getName())) {
+					    							
+					    					//		DownloadFileServlet.file_download(annoc.getId)
+					                             	System.out.println("Downloading : "+file_name);
+					                                 try{
+					                                	 
+					            							DownloadFileServlet.file_download(file_id, file_name, cours_path, course.getId(), drive_service);
+					                                    //   downloads.add(file_name);
+					                                 }
+					                                 catch(IOException e) {
+					                                 e.printStackTrace();
+					                                 }
+					    						}
+					    						else {
+					    							skip=true;
+					    						}
+					    					} catch (InstantiationException | IllegalAccessException | ClassNotFoundException
+					    							| SQLException e) {
+					    						// TODO Auto-generated catch block
+					    						e.printStackTrace();
+					    					}
+
+					             		}
+					                     else {
+					                     	System.out.println("Extension not supported " + file_name);
+					                     }
+					             }
+					     }
+					     catch(NullPointerException e){
+					     }
+					     if (skip) {
+					    	 break;
+					     }
+						
+					}
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					System.out.println("No announcements found for this classroom!");
+					e.printStackTrace();
+				}
+	  	    	 //COURSE WORK HERE
+	  	        
+	  	     }		
+ 	     }
+	}
+
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
 		doGet(request, response);
 	}
 	
-	static boolean isTeacher(Classroom service) throws IOException {
+	
+	
+	public static boolean isTeacher(Classroom service) throws IOException {
 		UserProfile user = service.userProfiles().get("me").execute();
 		System.out.println(user);
 		return user.getVerifiedTeacher();
 	}
 	
-	static String getUserid(Classroom service) throws IOException {
+	public static String getUserid(Classroom service) throws IOException {
 		UserProfile user = service.userProfiles().get("me").execute();
 
 		return user.getId();
 		
 	}
 	
-
 }

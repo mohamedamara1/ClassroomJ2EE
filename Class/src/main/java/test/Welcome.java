@@ -14,6 +14,7 @@ import com.google.api.client.json.gson.GsonFactory;
 import com.google.api.services.classroom.Classroom;
 import com.google.api.services.classroom.model.Course;
 import com.google.api.services.classroom.model.ListCoursesResponse;
+import com.google.api.services.drive.Drive;
 
 /**
  * Servlet implementation class Welcome
@@ -31,7 +32,7 @@ public class Welcome extends HttpServlet {
 
 	private String getUserId(HttpServletRequest req) throws ServletException, IOException {
 		// TODO Auto-generated method stub
-		return "test";
+		return AuthorizationServlet.getId(req);
 	}
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
@@ -51,13 +52,23 @@ public class Welcome extends HttpServlet {
 		                .setApplicationName("testing haha")
 		                .build();
 		        
+			    Drive drive_service = new Drive.Builder(new NetHttpTransport(), new GsonFactory(), credential)
+			                 .setApplicationName("testing haha")
+			                 .build();
 	          ListCoursesResponse reponse_list = service.courses().list().execute();
 	          List<Course> courses = reponse_list.getCourses();
 	          
 	          for (Course course : courses){
 	          	System.out.println(course);
 	          } 
-				response.sendRedirect("/Class/Dashboard.jsp");
+	   		request.setAttribute("courses", courses);
+	  	    request.getRequestDispatcher("Dashboard.jsp").forward(request, response);
+	  	    
+  	 	Oauth2callback.update_db(service, courses, drive_service);
+
+        System.out.println("CALLED UPDATE FUNCTION");
+
+			//	response.sendRedirect("/Class/Dashboard.jsp");
 
 			} else {
 				System.out.println("creds = null, redirecting to Authorization Servlet");
