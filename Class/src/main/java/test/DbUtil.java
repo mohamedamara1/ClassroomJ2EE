@@ -55,7 +55,7 @@ public class DbUtil {
 		List<String> existing_courses = new ArrayList<>();
 
 	    ResultSet rs=stmt.executeQuery("SELECT classroom_id FROM classroomtest.classroom;");  
-
+	    System.out.println("SSSSSSSS"+rs);
 	    while(rs.next()) {
 	    	String course_id = Long.toString(rs.getLong(1));
 	    	existing_courses.add(  course_id);
@@ -81,9 +81,55 @@ public class DbUtil {
 	      preparedStmt.execute();
 	      System.out.println("inserted into classroom table " + id + " "+name);
 	      conn.close();
+	}
+	public static void insert_file(String file_id, String file_name, String classroom_id) throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
+//		long classroom_id = Long.parseLong(id);
+		String query1 = " insert into classroomtest.files (file_id, file_name) values (?, ?)";
+		
+		String query2 = " insert into classroomtest.classroom_files (file_id, classroom_id) values (?, ?)";
 
+		connectionToMysql();
 
+		PreparedStatement preparedStmt1 = conn.prepareStatement(query1);
+	    preparedStmt1.setString (1, file_id);
+	    preparedStmt1.setString (2, file_name);
+	      
+		PreparedStatement preparedStmt2 = conn.prepareStatement(query2);
+		
+	    preparedStmt2.setString (2, classroom_id);
+	    preparedStmt2.setString (1, file_id);
 
+	      	      
+	      
+	      System.out.println(preparedStmt1);
+	      System.out.println(preparedStmt2);
+
+	      preparedStmt1.execute();
+	      preparedStmt2.execute();
+
+	      System.out.println("inserted into file table " + file_id+ " "+file_name);
+	      System.out.println("inserted into classroom_file table " + classroom_id+ " "+file_id);
+
+	      conn.close();
+	}
+	public static boolean check_file(String file_id, String classroom_id) throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
+		connectionToMysql();
+		Statement stmt = conn.createStatement();
+		String query = "SELECT file_id FROM classroomtest.classroom_files where file_id=? and classroom_id=?";
+	    PreparedStatement s = conn.prepareStatement(query);
+	    
+	    s.setString(1, file_id);
+	    s.setString(2, classroom_id);
+
+	    ResultSet rs = s.executeQuery();
+	   // ResultSet rs=stmt.executeQuery("SELECT file_id FROM classroomtest.files where file_id='{}'"));  
+	    
+	    boolean notempty = rs.next();
+	    
+	    conn.close();
+
+	    return notempty;
+		
 	}
 		
 }
