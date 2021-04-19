@@ -172,7 +172,7 @@ public class DownloadFileServlet extends HttpServlet {
                                  if (verif(file_name)) {
                                  	System.out.println("Downloading : "+file_name);
                                          try{
-     										file_download(file_id, file_name, path,course_id, credential);
+     										file_download(file_id, file_name, path,course_id, drive_service);
                                             //   downloads.add(file_name);
                                          }
                                          catch(IOException e) {
@@ -246,26 +246,6 @@ public class DownloadFileServlet extends HttpServlet {
 		//
 	}
 	
-	public static  void file_download(String file_id, String file_name, String path, String course_id, Credential cred) throws IOException, InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
-		System.out.println("Downloading "+file_name);
-		// TODO Auto-generated method stub
-        Drive drive_service = new Drive.Builder(new NetHttpTransport(), new GsonFactory(), cred)
-                .setApplicationName("testing haha")
-                .build();
-        
-		FileOutputStream outputstream = new FileOutputStream(path+"/"+file_name);
-
-		drive_service.files().get(file_id).executeMediaAndDownloadTo(outputstream);
-
-		FileChannel fchannel = outputstream.getChannel();
-        long fileSize = fchannel.size();
-     //   this.download_size += fileSize;
-		outputstream.flush();
-		outputstream.close();
-		
-		DbUtil.insert_file(file_id, file_name, course_id);
-		//
-	}
     public static  boolean verif(String file_name){
         String extension = file_name.substring(file_name.lastIndexOf(".") + 1);
         List<String> extensions = Arrays.asList("pdf", "docx", "pptx", "png", "jpg", "html", "css", "js", "java",

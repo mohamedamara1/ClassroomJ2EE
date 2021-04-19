@@ -189,7 +189,7 @@ public class Oauth2callback extends HttpServlet {
 					                     if (DownloadFileServlet.verif(file_name)) {
 					                    	 
 					     	  	        	try {
-					    						if (! DbUtil.check_file(annonc.getId(), course.getName())) {
+					    						if (! DbUtil.check_file(file_id, course.getId())) {
 					    							
 					    					//		DownloadFileServlet.file_download(annoc.getId)
 					                             	System.out.println("Downloading : "+file_name);
@@ -203,6 +203,7 @@ public class Oauth2callback extends HttpServlet {
 					                                 }
 					    						}
 					    						else {
+					    							System.out.println("File exists on DB, skipping to next classroom");
 					    							skip=true;
 					    						}
 					    					} catch (InstantiationException | IllegalAccessException | ClassNotFoundException
