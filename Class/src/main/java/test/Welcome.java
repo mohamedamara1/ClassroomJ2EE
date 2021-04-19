@@ -46,7 +46,7 @@ public class Welcome extends HttpServlet {
 			if (credential != null) {
 				response.setHeader("Content-type", "text/html;charset=UTF-8");
 				response.setCharacterEncoding("UTF-8");
-				response.getWriter().append("!!!Credentials are already obtained!!!<br/>");
+				response.getWriter().append("!!!Credentials are already obtainedddd!!!<br/>");
 			
 		        Classroom service = new Classroom.Builder(new NetHttpTransport(), new GsonFactory(), credential)
 		                .setApplicationName("testing haha")
