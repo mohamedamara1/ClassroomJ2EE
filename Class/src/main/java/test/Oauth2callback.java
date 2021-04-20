@@ -25,6 +25,7 @@ import com.google.api.services.classroom.Classroom;
 import com.google.api.services.classroom.model.Announcement;
 import com.google.api.services.classroom.model.Course;
 import com.google.api.services.classroom.model.CourseWork;
+import com.google.api.services.classroom.model.GlobalPermission;
 import com.google.api.services.classroom.model.ListAnnouncementsResponse;
 import com.google.api.services.classroom.model.ListCourseWorkResponse;
 import com.google.api.services.classroom.model.ListCoursesResponse;
@@ -117,15 +118,23 @@ public class Oauth2callback extends HttpServlet {
 	      AuthorizationServlet.setUserId(request, userId);
 	      flow.createAndStoreCredential(tokenResponse, userId);
 	      
-	        
+	        System.out.println("1ERE VISITE");
 	        
           ListCoursesResponse reponse_list = service.courses().list().execute();
           List<Course> courses = reponse_list.getCourses();
           
     		request.setAttribute("courses", courses);
-  	      request.getRequestDispatcher("Dashboard.jsp").forward(request, response);
   	      
+		    if (Oauth2callback.isTeacher(service)) {
+		    	System.out.println("Redirecting to teacher page");
+		  	    request.getRequestDispatcher("TeacherSpace.jsp").forward(request, response);
 
+		    }else {
+		    	System.out.println("Redirecting to student page");
+
+		  	    request.getRequestDispatcher("Dashboard.jsp").forward(request, response);
+
+		    }
 	  	     
 	  	     //UPDATE FUNCTION THAT NEEDS A FUNCTION THAT TELLS HER WHAT ARE THE EXISTING FILES ON GOOGLE SERVERS
   	   
@@ -145,6 +154,8 @@ public class Oauth2callback extends HttpServlet {
 
 	
 	protected static void update_db(Classroom service, List<Course> courses, Drive drive_service) throws IOException {
+ 		System.out.println(isTeacher(service));
+
 		
 		   List<String> existing_courses = Arrays.asList();
 			try {
@@ -195,7 +206,7 @@ public class Oauth2callback extends HttpServlet {
 					                             	System.out.println("Downloading : "+file_name);
 					                                 try{
 					                                	 
-					            							DownloadFileServlet.file_download(file_id, file_name, cours_path, course.getId(), drive_service);
+					            							DownloadFileServlet.file_download(file_id, file_name, cours_path, course.getId(), drive_service, false);
 					                                    //   downloads.add(file_name);
 					                                 }
 					                                 catch(IOException e) {
@@ -244,9 +255,22 @@ public class Oauth2callback extends HttpServlet {
 	
 	
 	public static boolean isTeacher(Classroom service) throws IOException {
+		List<String> permissions = new ArrayList<>();
+
 		UserProfile user = service.userProfiles().get("me").execute();
+		try {
+			for (GlobalPermission permission : user.getPermissions()){
+				System.out.println(permission.getPermission());
+				permissions.add(permission.getPermission());
+			}
+		} catch (java.lang.NullPointerException e) {
+			// TODO Auto-generated catch block
+			return false;
+
+		}
 		System.out.println(user);
-		return user.getVerifiedTeacher();
+		
+		return permissions.contains("CREATE_COURSE");
 	}
 	
 	public static String getUserid(Classroom service) throws IOException {

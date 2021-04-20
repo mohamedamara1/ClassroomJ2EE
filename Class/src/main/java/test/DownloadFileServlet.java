@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -41,13 +42,34 @@ public class DownloadFileServlet extends HttpServlet {
 
 	protected void doGet(HttpServletRequest request,
             HttpServletResponse response) throws ServletException, IOException {
+		String zipFullPath = (String) request.getSession().getAttribute("path");
+      String filename = (String) request.getSession().getAttribute("name");
+
+        System.out.println("Downloading clusters.zip");
+
+        /* Now the zip is saved on zipFullPath */
+
+
+        response.setContentType("application/zip");
+        response.setHeader("Content-Disposition", "attachment;filename=\"" + filename + "\"");
+        OutputStream out = response.getOutputStream();
+
+        FileInputStream fis = new FileInputStream(zipFullPath);
+        int bytes;
+        while ((bytes = fis.read()) != -1) {
+            out.write(bytes);
+        }
+        fis.close();
+        response.flushBuffer();
+
+        System.out.println(".zip file downloaded at client successfully");
+	    }
    
-    }
 
 	//@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		// TODO Auto-generated method stub
-		super.doPost(req, resp);
+//		super.doPost(req, resp);
 		System.out.println("INSIDE POST METHOD OF DOWNLOADFILESERVLET");
 
 		
@@ -94,10 +116,10 @@ public class DownloadFileServlet extends HttpServlet {
         List<String> classrooms = new ArrayList<String>();
 
         
-		for (String course : courses_to_download) {
+		for (String course_id : courses_to_download) {
 			
 			try {
-			String	classroom_name = DbUtil.get_classroom_name(course).replaceAll(" ", "");
+			String	classroom_name = DbUtil.get_classroom_name(course_id).replaceAll(" ", "");
 				System.out.println("CLASSROOPM NAME = "+classroom_name);
 				classrooms.add("/home/med/eclipse-workspace/Class/src/main/resources/classrooms/"+classroom_name);
 
@@ -111,12 +133,20 @@ public class DownloadFileServlet extends HttpServlet {
 		
 	    String[] myFiles = new String[ classrooms.size() ];
 	    classrooms.toArray( myFiles );
-        String zipFile= "/home/med/eclipse-workspace/Class/src/main/resources/classrooms/"+randomNum;
 	    
-	    ZipUtility.zip(myFiles, zipFile);
-
+	    String zipname= Integer.toString(randomNum)+".zip";
+        String zipFile= "/home/med/eclipse-workspace/Class/src/main/resources/classrooms/"+zipname;
+	    
         
-
+	    ZipUtility.zip(myFiles, zipFile);
+	    
+		//req.setAttribute("path", zipFile);
+	//    req.setAttribute("name", Integer.toString(randomNum));
+	    
+	    
+	    req.getSession().setAttribute("path", zipFile);
+	    req.getSession().setAttribute("name", zipname);
+	    doGet(req,resp);
 	}
 
 	 void initial_download_course(String course_id, HttpServletRequest req ) throws IOException, ServletException, InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
@@ -200,7 +230,7 @@ public class DownloadFileServlet extends HttpServlet {
                                  if (verif(file_name)) {
                                  	System.out.println("Downloading : "+file_name);
                                          try{
-     										file_download(file_id, file_name, path,course_id, drive_service);
+     										file_download(file_id, file_name, path,course_id, drive_service, false);
                                             //   downloads.add(file_name);
                                          }
                                          catch(IOException e) {
@@ -237,7 +267,7 @@ public class DownloadFileServlet extends HttpServlet {
                             if (verif(file_name)) {
                             	System.out.println("Downloading : "+file_name);
                                     try{
-										file_download(file_id, file_name, path, course_id, drive_service);
+										file_download(file_id, file_name, path, course_id, drive_service, false);
                                        //   downloads.add(file_name);
                                     }
                                     catch(IOException e) {
@@ -257,7 +287,7 @@ public class DownloadFileServlet extends HttpServlet {
 		
 	}
 
-	public static  void file_download(String file_id, String file_name, String path, String course_id, Drive drive_service) throws IOException, InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
+	public static  void file_download(String file_id, String file_name, String path, String course_id, Drive drive_service, boolean submission) throws IOException, InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
 		System.out.println("Downloading "+file_name);
 		// TODO Auto-generated method stub
 		FileOutputStream outputstream = new FileOutputStream(path+"/"+file_name);
@@ -269,8 +299,8 @@ public class DownloadFileServlet extends HttpServlet {
      //   this.download_size += fileSize;
 		outputstream.flush();
 		outputstream.close();
-		
-		DbUtil.insert_file(file_id, file_name, course_id);
+		if (! submission)
+			DbUtil.insert_file(file_id, file_name, course_id);
 		//
 	}
 	

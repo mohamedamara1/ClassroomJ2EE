@@ -40,6 +40,24 @@
   	<description></description>
   	<servlet-class>test.DownloadFileServlet</servlet-class>
   </servlet>
+  <servlet>
+  	<servlet-name>DownloadZip</servlet-name>
+  	<display-name>DownloadZip</display-name>
+  	<description></description>
+  	<servlet-class>test.DownloadZip</servlet-class>
+  </servlet>
+  <servlet>
+  	<servlet-name>DownloadForTeacher</servlet-name>
+  	<display-name>DownloadForTeacher</display-name>
+  	<description></description>
+  	<servlet-class>test.DownloadForTeacher</servlet-class>
+  </servlet>
+  <servlet>
+  	<servlet-name>ZipUtilityTeacher</servlet-name>
+  	<display-name>ZipUtilityTeacher</display-name>
+  	<description></description>
+  	<servlet-class>test.ZipUtilityTeacher</servlet-class>
+  </servlet>
   <servlet-mapping>
   	<servlet-name>Welcome</servlet-name>
   	<url-pattern>/Welcome</url-pattern>
@@ -63,5 +81,17 @@
   <servlet-mapping>
   	<servlet-name>DownloadFileServlet</servlet-name>
   	<url-pattern>/DownloadFileServlet</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+  	<servlet-name>DownloadZip</servlet-name>
+  	<url-pattern>/DownloadZip</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+  	<servlet-name>DownloadForTeacher</servlet-name>
+  	<url-pattern>/DownloadForTeacher</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+  	<servlet-name>ZipUtilityTeacher</servlet-name>
+  	<url-pattern>/ZipUtilityTeacher</url-pattern>
   </servlet-mapping>
 </web-app>

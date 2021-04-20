@@ -55,15 +55,31 @@ public class Welcome extends HttpServlet {
 			    Drive drive_service = new Drive.Builder(new NetHttpTransport(), new GsonFactory(), credential)
 			                 .setApplicationName("testing haha")
 			                 .build();
+			    
+
+			    
 	          ListCoursesResponse reponse_list = service.courses().list().execute();
 	          List<Course> courses = reponse_list.getCourses();
 	          
 	          for (Course course : courses){
 	          	System.out.println(course);
 	          } 
-	   		request.setAttribute("courses", courses);
-	  	    request.getRequestDispatcher("Dashboard.jsp").forward(request, response);
-	  	    
+	          
+		   		request.setAttribute("courses", courses);
+		   		
+		   		System.out.println("2EME VISITE");
+	          
+			    if (Oauth2callback.isTeacher(service)) {
+			    	System.out.println("Redirecting to teacher page");
+			  	    request.getRequestDispatcher("TeacherSpace.jsp").forward(request, response);
+
+			    }else {
+			    	System.out.println("Redirecting to student page");
+
+			  	    request.getRequestDispatcher("Dashboard.jsp").forward(request, response);
+
+			    }
+	  	    System.out.println("SHOULD HAVE FORWARDED TO A PAGE");
   	 	Oauth2callback.update_db(service, courses, drive_service);
 
         System.out.println("CALLED UPDATE FUNCTION");

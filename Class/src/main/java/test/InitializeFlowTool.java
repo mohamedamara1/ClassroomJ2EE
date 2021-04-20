@@ -52,9 +52,13 @@ public class InitializeFlowTool {
     private static final List<String> SCOPES = Arrays.asList( 
     		ClassroomScopes.CLASSROOM_COURSES, //https://www.googleapis.com/auth/admin.directory.group\n"
     	    ClassroomScopes.CLASSROOM_ANNOUNCEMENTS,
-    	    ClassroomScopes.CLASSROOM_COURSEWORK_ME_READONLY,
+            ClassroomScopes.CLASSROOM_COURSEWORK_ME_READONLY,
+            ClassroomScopes.CLASSROOM_COURSEWORK_STUDENTS_READONLY,
     	    ClassroomScopes.CLASSROOM_ROSTERS,
-    	    DriveScopes.DRIVE);
+    	    ClassroomScopes.CLASSROOM_PROFILE_EMAILS,
+    	    ClassroomScopes.CLASSROOM_PROFILE_PHOTOS,
+    	    DriveScopes.DRIVE
+);
 
 
     static {
