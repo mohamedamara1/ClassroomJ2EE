@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.channels.FileChannel;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -29,6 +30,8 @@ import com.google.api.services.classroom.model.Material;
 import com.google.api.services.drive.Drive;
 
  
+import java.util.concurrent.ThreadLocalRandom;
+
 public class DownloadFileServlet extends HttpServlet {
  
     /**
@@ -87,9 +90,30 @@ public class DownloadFileServlet extends HttpServlet {
         }
         
         //download courses on server finished here, now we prepare the ZIP file
-  
-		
+        int randomNum = ThreadLocalRandom.current().nextInt(1,  1000000);
+        List<String> classrooms = new ArrayList<String>();
+
         
+		for (String course : courses_to_download) {
+			
+			try {
+			String	classroom_name = DbUtil.get_classroom_name(course).replaceAll(" ", "");
+				System.out.println("CLASSROOPM NAME = "+classroom_name);
+				classrooms.add("/home/med/eclipse-workspace/Class/src/main/resources/classrooms/"+classroom_name);
+
+			} catch (InstantiationException | IllegalAccessException | ClassNotFoundException | SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			
+		}
+		
+	    String[] myFiles = new String[ classrooms.size() ];
+	    classrooms.toArray( myFiles );
+        String zipFile= "/home/med/eclipse-workspace/Class/src/main/resources/classrooms/"+randomNum;
+	    
+	    ZipUtility.zip(myFiles, zipFile);
 
         
 
@@ -115,8 +139,12 @@ public class DownloadFileServlet extends HttpServlet {
 		
 		course_folder.mkdir();
 		
-		(new File(path+"/Cours")).mkdir();
-		(new File(path+"/TD+TP")).mkdir();		
+		(new File(path+"/Student")).mkdir();
+		(new File(path+"/Student")).mkdir();		
+		
+		
+		(new File(path+"/Student/Cours")).mkdir();
+		(new File(path+"/Student/TD+TP")).mkdir();
 		System.out.println("New course folder created : "+course.getName().replaceAll(" ", ""));
 		
 
@@ -157,7 +185,7 @@ public class DownloadFileServlet extends HttpServlet {
      public void download_announcements(List<Announcement> announcements, String course_name,String course_id, Credential credential) throws NullPointerException, IOException, ServletException, InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException{
 
  		System.out.println("Downloading course work...");
- 		String path = "/home/med/eclipse-workspace/Class/src/main/resources/classrooms/"+course_name.replaceAll(" ", "")+"/Cours";
+ 		String path = "/home/med/eclipse-workspace/Class/src/main/resources/classrooms/"+course_name.replaceAll(" ", "")+"/Student/Cours";
 
          Drive drive_service = new Drive.Builder(new NetHttpTransport(), new GsonFactory(), credential)
                  .setApplicationName("testing haha")
@@ -191,7 +219,7 @@ public class DownloadFileServlet extends HttpServlet {
 	private  void download_works(List<CourseWork> works, String course_name, String course_id,Credential credential) throws IOException, ServletException, InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
 		// TODO Auto-generated method stub
 		System.out.println("Downloading course work...");
-		String path = "/home/med/eclipse-workspace/Class/src/main/resources/classrooms/"+course_name.replaceAll(" ", "")+"/TD+TP";
+		String path = "/home/med/eclipse-workspace/Class/src/main/resources/classrooms/"+course_name.replaceAll(" ", "")+"/Student/TD+TP";
 	//	Credential credential = InitializeFlowTool.initializeFlow().loadCredential("123456");
 
         Drive drive_service = new Drive.Builder(new NetHttpTransport(), new GsonFactory(), credential)
