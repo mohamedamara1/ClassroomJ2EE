@@ -66,6 +66,32 @@ public class DbUtil {
 	//	return existing_courses;
 		return existing_courses;
 	}
+	
+	public static String get_classroom_name(String classroom_id) throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
+		// TODO Auto-generated method stub
+		connectionToMysql();
+		Statement stmt = conn.createStatement();
+		 String classroom_name="";
+		
+
+	    String query = ("SELECT classroom_name FROM classroomtest.classroom where classroom_id = ?");  
+
+	    PreparedStatement s = conn.prepareStatement(query);
+	    
+	    s.setString(1, classroom_id);
+
+	    ResultSet rs = s.executeQuery();
+	   // ResultSet rs=stmt.executeQuery("SELECT file_id FROM classroomtest.files where file_id='{}'"));  
+	    while (rs.next()) {
+		     classroom_name = rs.getString("classroom_name");
+	
+	    }
+	    conn.close();
+	    	
+	    
+	//	return existing_courses;
+		return classroom_name;
+	}
 	public static void insert_classroom(String id, String name) throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
 //		long classroom_id = Long.parseLong(id);
 		String query = " insert into classroomtest.classroom (classroom_id, classroom_name)"
@@ -103,9 +129,15 @@ public class DbUtil {
 	      
 	      System.out.println(preparedStmt1);
 	      System.out.println(preparedStmt2);
+	      try {
+		      preparedStmt1.execute();
+		      preparedStmt2.execute();  	  
+	      }
+	      catch(java.sql.SQLIntegrityConstraintViolationException e ) {
+	    	  System.out.println(e);
+	    	  
+	      }
 
-	      preparedStmt1.execute();
-	      preparedStmt2.execute();
 
 	      System.out.println("inserted into file table " + file_id+ " "+file_name);
 	      System.out.println("inserted into classroom_file table " + classroom_id+ " "+file_id);
