@@ -66,13 +66,15 @@ public class ZipUtilityTeacher {
     private static void zipDirectory(File folder, String parentFolder,
             ZipOutputStream zos) throws FileNotFoundException, IOException {
         for (File file : folder.listFiles()) {
-            if (! file.getName().equals("Student")){
+           
                 if ( (file.isDirectory() )) {
-				//        System.out.println("p"+file.getName()+"Teacher");				
 				    zipDirectory(file, parentFolder + "/" + file.getName(), zos);
 				    continue;
 			}
+             
+		
 			zos.putNextEntry(new ZipEntry(parentFolder + "/" + file.getName()));
+	
 			BufferedInputStream bis = new BufferedInputStream(
 			        new FileInputStream(file));
 			long bytesRead = 0;
@@ -83,7 +85,7 @@ public class ZipUtilityTeacher {
 			    bytesRead += read;
 			}
 			zos.closeEntry();
-			}
+			
         }
     }
     /**
@@ -109,6 +111,7 @@ public class ZipUtilityTeacher {
     
     public static void generate_zip(String[] files, String destination_zipfile) {
     	//ZipUtility zipUtil = new zipUtility();
+    	System.out.println("Creating ZIP file at "+destination_zipfile);
     	try {
     		zip(files, destination_zipfile);
     		

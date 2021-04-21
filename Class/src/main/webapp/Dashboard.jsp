@@ -23,7 +23,7 @@
 	<div class="row ">
 			<div class="offset-2 col-8">
 				<div class=container bg-success">
-						<form class="form-inline row" id="selection" action="DownloadFileServlet" method="post" onsubmit = "event.preventDefault(); myValidation();">
+						<form class="form-inline row" id="selection" action="DownloadFileServlet" method="post" onsubmit = "return myValidation();" >
 						
 						<div class="offset-4 col-4 ">
 							<input  type="checkbox" id="all"> 

@@ -231,7 +231,6 @@ public class DownloadFileServlet extends HttpServlet {
                                  	System.out.println("Downloading : "+file_name);
                                          try{
      										file_download(file_id, file_name, path,course_id, drive_service, false);
-                                            //   downloads.add(file_name);
                                          }
                                          catch(IOException e) {
                                          e.printStackTrace();
@@ -268,7 +267,6 @@ public class DownloadFileServlet extends HttpServlet {
                             	System.out.println("Downloading : "+file_name);
                                     try{
 										file_download(file_id, file_name, path, course_id, drive_service, false);
-                                       //   downloads.add(file_name);
                                     }
                                     catch(IOException e) {
                                     e.printStackTrace();
@@ -301,7 +299,6 @@ public class DownloadFileServlet extends HttpServlet {
 		outputstream.close();
 		if (! submission)
 			DbUtil.insert_file(file_id, file_name, course_id);
-		//
 	}
 	
     public static  boolean verif(String file_name){

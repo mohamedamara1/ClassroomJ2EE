@@ -4,8 +4,10 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -61,31 +63,13 @@ public class Oauth2callback extends HttpServlet {
 		System.out.println("########: " + code);
 		AuthorizationCodeFlow flow = InitializeFlowTool.initializeFlow();
 		
-	/*	GoogleTokenResponse resp =
-				 new GoogleAuthorizationCodeTokenRequest(new NetHttpTransport(), new GsonFactory(),
-				 "404366420582-i7m41p0cv9vgijdbu7rmv4sog8d3r61h.apps.googleusercontent.com", "Ml0d4hgQ2_Nw8vPALO_ErsDM",
-				 code, InitializeFlowTool.getREDIRECT_URI())
-				 .execute();
-		*/
-	
 		TokenResponse tokenResponse =
 		          flow.newTokenRequest(code)
 		              .setRedirectUri(InitializeFlowTool.getREDIRECT_URI()).execute();
         System.out.println("Access token: " + tokenResponse.getAccessToken());
 
-	//	String userId = "123456";
-	    // Extract the Google User ID from the ID token in the auth response
-  //    System.out.println("Code exchange worked. User " + userId + " logged in.");
-
-	      // Set it into the session
-	//      AuthorizationServlet.setUserId(request, userId);
-	//      flow.createAndStoreCredential(tokenResponse, userId);
-	      
 	      System.out.println("token saved and user id saved");
 	      
-	      
-	  //    Credential cred = new Credential(BearerToken.authorizationHeaderAccessMethod())
-	//    		  .setFromTokenResponse( tokenResponse);
 	      
 	      Credential credential = new Credential.Builder(BearerToken.authorizationHeaderAccessMethod()).setTransport(
 	    		  new NetHttpTransport())
@@ -96,21 +80,14 @@ public class Oauth2callback extends HttpServlet {
 	    		  .build()
 	    		  .setFromTokenResponse(tokenResponse);
 	     System.out.println(credential);
-	      
-	 //     System.out.println("CRED expires in: "+credential.getExpiresInSeconds());
-	        
-	      
+	      	     
 	      Classroom service = new Classroom.Builder(new NetHttpTransport(), new GsonFactory(), credential)
 	                .setApplicationName("testing haha")
 	                .build();
 	      
-
 	      Drive drive_service = new Drive.Builder(new NetHttpTransport(), new GsonFactory(), credential)
 	                 .setApplicationName("testing haha")
 	                 .build();
-	   //    System.out.println("SERVICE : " + service);
-	       
-	//        System.out.println("AUTHENTICATED USER IS A TEACHER : " +isTeacher(service));
 	      
 	      
 	      String userId = getUserid(service);
@@ -122,37 +99,48 @@ public class Oauth2callback extends HttpServlet {
 	        
           ListCoursesResponse reponse_list = service.courses().list().execute();
           List<Course> courses = reponse_list.getCourses();
-          
-    		request.setAttribute("courses", courses);
-  	      
+      
 		    if (Oauth2callback.isTeacher(service)) {
+		    		          
+	  	    Map <Course, List<CourseWork>> course_compterendus = new HashMap<Course,List<CourseWork>>();
+	          
+		          for (Course course : courses) {
+		        	  
+		              ListCourseWorkResponse works_response = service.courses().courseWork().list(course.getId()).execute();
+		             List<CourseWork> works = works_response.getCourseWork();
+		        	  
+		             course_compterendus.put(course, works);
+		        	 
+		          }
+		          
+		          System.out.println("PRITING COURSES AND THEIR COURSE WORKS");
+			         System.out.println(Arrays.asList(course_compterendus));
+		          
+					request.setAttribute("courseworks", course_compterendus);
+			        
+			          System.out.println("PRITING COURSES AND THEIR COURSE WORKS");
+				         System.out.println(Arrays.asList(course_compterendus));
+				         
 		    	System.out.println("Redirecting to teacher page");
 		  	    request.getRequestDispatcher("TeacherSpace.jsp").forward(request, response);
 
 		    }else {
 		    	System.out.println("Redirecting to student page");
+	    		request.setAttribute("courses", courses);
 
 		  	    request.getRequestDispatcher("Dashboard.jsp").forward(request, response);
 
 		    }
 	  	     
-	  	     //UPDATE FUNCTION THAT NEEDS A FUNCTION THAT TELLS HER WHAT ARE THE EXISTING FILES ON GOOGLE SERVERS
-  	   
-  	      
+	  	     //UPDATE FUNCTION THAT NEEDS A FUNCTION THAT TELLS HER WHAT ARE THE EXISTING FILES ON GOOGLE SERVERS 	  
+		    
   	      	update_db(service, courses, drive_service);
         System.out.println("CALLED UPDATE FUNCTION");
 
        
 	      return;
 	}
-	
-	
-	
-	
-	
 
-
-	
 	protected static void update_db(Classroom service, List<Course> courses, Drive drive_service) throws IOException {
  		System.out.println(isTeacher(service));
 
@@ -169,20 +157,14 @@ public class Oauth2callback extends HttpServlet {
   	    	 
          	if ( existing_courses.contains(course.getId()) ) {
          		System.out.println("*******UPdating "+course.getName());
-   
-        		
-        	
-         	
+
 	  	        ListAnnouncementsResponse announcements_reponse = service.courses().announcements().list(course.getId()).execute();
 	  	        List<Announcement> announcements = announcements_reponse.getAnnouncements();
   			String cours_path = "/home/med/eclipse-workspace/Class/src/main/resources/classrooms/"+course.getName().replaceAll(" ", "")+"/Student/Cours";
-
-  			
-	  	        
+    
 	  	        ListCourseWorkResponse works_response = service.courses().courseWork().list(course.getId()).execute();
 	  	        List<CourseWork> works = works_response.getCourseWork(); 
   			String work_path = "/home/med/eclipse-workspace/Class/src/main/resources/classrooms/"+course.getName().replaceAll(" ", "")+"/Student/TD+TP";
-
   			
 	  	        try {
 					for (Announcement annonc : announcements) {
@@ -191,9 +173,7 @@ public class Oauth2callback extends HttpServlet {
 					     
 						 boolean skip = false;
 
-
 					     try{
-					    	 
 					             for (Material material : materials){
 					                     String file_id = material.getDriveFile().getDriveFile().getId();
 					                     String file_name = material.getDriveFile().getDriveFile().getTitle();
@@ -202,12 +182,10 @@ public class Oauth2callback extends HttpServlet {
 					     	  	        	try {
 					    						if (! DbUtil.check_file(file_id, course.getId())) {
 					    							
-					    					//		DownloadFileServlet.file_download(annoc.getId)
 					                             	System.out.println("Downloading : "+file_name);
 					                                 try{
 					                                	 
 					            							DownloadFileServlet.file_download(file_id, file_name, cours_path, course.getId(), drive_service, false);
-					                                    //   downloads.add(file_name);
 					                                 }
 					                                 catch(IOException e) {
 					                                 e.printStackTrace();
@@ -222,7 +200,6 @@ public class Oauth2callback extends HttpServlet {
 					    						// TODO Auto-generated catch block
 					    						e.printStackTrace();
 					    					}
-
 					             		}
 					                     else {
 					                     	System.out.println("Extension not supported " + file_name);
@@ -241,8 +218,7 @@ public class Oauth2callback extends HttpServlet {
 					System.out.println("No announcements found for this classroom!");
 					e.printStackTrace();
 				}
-	  	    	 //COURSE WORK HERE
-	  	        
+
 	  	     }		
  	     }
 	}
@@ -251,9 +227,7 @@ public class Oauth2callback extends HttpServlet {
 		// TODO Auto-generated method stub
 		doGet(request, response);
 	}
-	
-	
-	
+
 	public static boolean isTeacher(Classroom service) throws IOException {
 		List<String> permissions = new ArrayList<>();
 
@@ -275,9 +249,7 @@ public class Oauth2callback extends HttpServlet {
 	
 	public static String getUserid(Classroom service) throws IOException {
 		UserProfile user = service.userProfiles().get("me").execute();
-
 		return user.getId();
-		
 	}
 	
 }

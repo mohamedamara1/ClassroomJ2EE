@@ -32,7 +32,6 @@ public class DbUtil {
 
 	  	   conn=DriverManager.getConnection(  
 	  			"jdbc:mysql://localhost:3306/classroomtest","root","");  
-	  	    System.out.println("Connexion = "+conn);
 	  	    
 	  	    
 		  }
@@ -55,7 +54,6 @@ public class DbUtil {
 		List<String> existing_courses = new ArrayList<>();
 
 	    ResultSet rs=stmt.executeQuery("SELECT classroom_id FROM classroomtest.classroom;");  
-	    System.out.println("SSSSSSSS"+rs);
 	    while(rs.next()) {
 	    	String course_id = Long.toString(rs.getLong(1));
 	    	existing_courses.add(  course_id);

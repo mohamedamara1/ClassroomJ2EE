@@ -1,5 +1,9 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+<%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@page isELIgnored="false"%>
+
+
 	<!DOCTYPE html>
 	<html>
 	<head>
@@ -19,17 +23,17 @@
 		<div class="row ">
 				<div class="col-12">
 					<div class="container">
-							<form class="form-inline row" id="selection" action="DownloadFileServlet" method="post" onsubmit = "event.preventDefault(); myValidation();"> 
+							<form class="form-inline row" id="selection" action="DownloadForTeacher" method="post" > 
 							<div class="row mt-3">
-								<c:forEach items="${courses}" var="course"><!--les classes-->
+								<c:forEach items="${courseworks}" var="entry"><!--les classes-->
 								  <div class="col-md-3">
 									<div class="card shadow-sm">
-									<h4>${course.getName()}</h4>
+									<h4>${entry.key.getName()}</h4>
 									<div class="card-body">
 									  <p class="card-text">
-										<c:forEach items="${courses}" var="course"></c:forEach><!--les comptes rendu-->
-										<input name="matieres" type="checkbox" class="form-check-input" value="${course.getId()}" id="${course.getId()}">
-										<label for="${course.getId()}" class="form-check-label">${course.getId()}</label>
+										<c:forEach items="${entry.value}" var="compterendu"> <!--les comptes rendu-->
+										<input name="compterendu" type="checkbox" class="form-check-input" value="${compterendu.getId()},${entry.key.getId()}" id="${compterendu.getId()}">
+										<label for="${compterendu.getId()}" class="form-check-label">${compterendu.getTitle()}</label>
 										</p>
 										</c:forEach>
 									  <div class="d-flex justify-content-between align-items-center">

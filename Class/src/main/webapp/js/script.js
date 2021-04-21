@@ -33,15 +33,22 @@ function check3 ()
 }
 if (!test){alert('Check at least one choice');}
 
-}function myValidation ()
-{var test=false;
+}function myValidation (){
+var test=false;
     for (let i = 0; i < box.length; i++) 
 {
     if (box[i].checked==true)
     { test=true;break;}
 }
-if (!test){alert('Check at least one choice');returnToPreviousPage();
-return false;}
+if (!test){
+alert('Check at least one choice');
+
+return false;
+}
+else{
+console.log("returned true");
+return true;
+}
 
 }
 
