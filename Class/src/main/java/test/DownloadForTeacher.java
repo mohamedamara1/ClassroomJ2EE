@@ -6,7 +6,9 @@ import java.security.GeneralSecurityException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
 
 import javax.servlet.ServletException;
@@ -66,30 +68,34 @@ public class DownloadForTeacher extends HttpServlet {
 	                 .setApplicationName("testing haha")
 	                 .build();
 	    
-  /*      String[] selected_courses = req.getParameterValues("matieres");
+        String[] selected_compterendu = req.getParameterValues("compterendu");
         
-        for(String s : selected_courses) {
-            System.out.println("Name : " + s);
-        }*/
-	//	in this part we extract a list of strings , strings of classroom_id 
-        
-        
-		
-     //   List<String> courses_to_download =  Arrays.asList(selected_courses);
-	    
-        try {
-        	System.out.println("Downloading compte rendu..");
-			download_compte_rendu("173288968576","184819152798", drive_service, classroom_service);
-			System.out.println("Finished download compte rendeu");
-			
-		} catch (InstantiationException | IllegalAccessException | ClassNotFoundException | IOException
-				| GeneralSecurityException | SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-        
+	    Map <String, String> course_compterendu = new HashMap<String, String>();
 
         
+        for (String composed_string : selected_compterendu) {
+        	String[] course_cr_str = composed_string.split(",");
+        	
+        	course_compterendu.put(course_cr_str[0], course_cr_str[1]);
+        }
+        
+	//    hm.put(1, new Point2D.Double(50, 50));
+        for (Map.Entry<String, String> entry : course_compterendu.entrySet()) {
+            System.out.println(entry.getKey() + "/" + entry.getValue());
+            try {
+            	System.out.println("Downloading compte rendu..");
+            	
+    			download_compte_rendu(entry.getKey(),entry.getValue(), drive_service, classroom_service);
+    			System.out.println("Finished download compte rendu");
+    			
+    			
+    		} catch (InstantiationException | IllegalAccessException | ClassNotFoundException | IOException
+    				| GeneralSecurityException | SQLException e) {
+    			// TODO Auto-generated catch block
+    			e.printStackTrace();
+    		}
+        }
+     
         
         //download courses on server finished here, now we prepare the ZIP file
         
