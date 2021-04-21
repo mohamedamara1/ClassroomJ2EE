@@ -70,8 +70,8 @@ public class InitializeFlowTool {
             System.exit(1);
         }
     }
-    
-    private final static String REDIRECT_URI = "http://localhost:8080/Class/Oauth2callback";
+    private final static String REDIRECT_URI = "https://b2e034fe8a1468.localhost.run/Class/Oauth2callback";
+  //  private final static String REDIRECT_URI = "http://localhost:8080/Class/Oauth2callback";
 	
 	public static String getREDIRECT_URI() {
 		return REDIRECT_URI;
