@@ -1,7 +1,6 @@
 document.getElementById("all").addEventListener("click",check1);
 //var box=document.getElementsByClassName("classes");
-document.getElementById("submit").addEventListener("click",check3);
-var box=document.getElementsByName("matieres")
+var box=document.getElementsByName("matieres");
 
 for (let i = 0; i < box.length; i++) 
 {
@@ -33,6 +32,16 @@ function check3 ()
     { test=true;break;}
 }
 if (!test){alert('Check at least one choice');}
+
+}function myValidation ()
+{var test=false;
+    for (let i = 0; i < box.length; i++) 
+{
+    if (box[i].checked==true)
+    { test=true;break;}
+}
+if (!test){alert('Check at least one choice');returnToPreviousPage();
+return false;}
 
 }
 
