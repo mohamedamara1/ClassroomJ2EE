@@ -43,13 +43,12 @@
 						</div>
 						
 						<div class="row mt-3">
-							<input class="offset-4 col-md-4 btn btn-sm btn-outline-success" type="submit" value="Download" id="submit">
+							<input class="offset-4 col-md-4 btn btn-sm btn-outline-success" type="submit" value="Download" id="submit" >
 							
 						</div>
 
 						    
 						</form>
-				
 				</div>
 
 			</div>

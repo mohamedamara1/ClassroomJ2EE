@@ -57,7 +57,7 @@ public class InitializeFlowTool {
     	    ClassroomScopes.CLASSROOM_ROSTERS,
     	    ClassroomScopes.CLASSROOM_PROFILE_EMAILS,
     	    ClassroomScopes.CLASSROOM_PROFILE_PHOTOS,
-    	    DriveScopes.DRIVE
+    	    DriveScopes.DRIVE_READONLY
 );
 
 
@@ -70,8 +70,8 @@ public class InitializeFlowTool {
             System.exit(1);
         }
     }
-  //  private final static String REDIRECT_URI = "https://9e7a6dd2941919.localhost.run/Class/Oauth2callback";
-    private final static String REDIRECT_URI = "http://localhost:8080/Class/Oauth2callback";
+ //   private final static String REDIRECT_URI = "https://fa4474ed16f9ee.localhost.run/Class/Oauth2callback";
+   private final static String REDIRECT_URI = "http://localhost:8080/Class/Oauth2callback";
 	
 	public static String getREDIRECT_URI() {
 		return REDIRECT_URI;

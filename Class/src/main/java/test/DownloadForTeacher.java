@@ -190,14 +190,31 @@ public class DownloadForTeacher extends HttpServlet {
             }
 
             List<Attachment> attachments = submission.getAssignmentSubmission().getAttachments();
-            for (Attachment attachment : attachments){
-                DriveFile drive_file = attachment.getDriveFile();
-                String file_id = drive_file.getId();
-                String file_name = drive_file.getTitle();
-                
-                //(String file_id, String file_name, String path, String course_id, Drive drive_service)
-                DownloadFileServlet.file_download(file_id, file_name, student_folder.getPath(),course_id, drive_service, true);
-            }
+            try {
+				for (Attachment attachment : attachments){
+				    DriveFile drive_file = attachment.getDriveFile();
+				    String file_id = drive_file.getId();
+				    String file_name = drive_file.getTitle();
+				    
+				    //(String file_id, String file_name, String path, String course_id, Drive drive_service)
+				    DownloadFileServlet.file_download(file_id, file_name, student_folder.getPath(),course_id, drive_service, true);
+				}
+			} catch (InstantiationException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IllegalAccessException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (ClassNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 
         }
     }

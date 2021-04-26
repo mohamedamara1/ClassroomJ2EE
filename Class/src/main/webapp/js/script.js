@@ -1,7 +1,18 @@
+console.log("hello fro mstudent page");
+
+
 document.getElementById("all").addEventListener("click",check1);
 //var box=document.getElementsByClassName("classes");
 var box=document.getElementsByName("matieres");
 
+document.getElementById("test").addEventListener("click", (event) =>{
+    console.log("clicked test button");
+        console.log(event.target.value);
+            console.log(event.target);
+
+
+    console.log(event.target.id);
+})
 for (let i = 0; i < box.length; i++) 
 {
     box[i].addEventListener("click",check2); 
@@ -33,7 +44,9 @@ function check3 ()
 }
 if (!test){alert('Check at least one choice');}
 
-}function myValidation (){
+}
+
+function myValidation (){
 var test=false;
     for (let i = 0; i < box.length; i++) 
 {
@@ -42,7 +55,6 @@ var test=false;
 }
 if (!test){
 alert('Check at least one choice');
-
 return false;
 }
 else{
