@@ -29,7 +29,7 @@
 								<div class="card-body">
 								  <p class="card-text">
 									<c:forEach items="${entry.value}" var="compterendu"> <!--les comptes rendu-->
-									<input name="${entry.key.getId()}" type="checkbox" class="form-check-input" value="${compterendu.getId()},${entry.key.getId()}" id="${compterendu.getId()}">
+									<input name="compterendu" type="checkbox" class="form-check-input ${entry.key.getId()}" value="${compterendu.getId()},${entry.key.getId()}" id="${compterendu.getId()}">
 									<label for="${compterendu.getId()}" class="form-check-label">${compterendu.getTitle()}</label>
 									</p>
 									</c:forEach>
