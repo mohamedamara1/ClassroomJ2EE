@@ -160,11 +160,11 @@ public class Oauth2callback extends HttpServlet {
 
 	  	        ListAnnouncementsResponse announcements_reponse = service.courses().announcements().list(course.getId()).execute();
 	  	        List<Announcement> announcements = announcements_reponse.getAnnouncements();
-  			String cours_path = "/home/med/eclipse-workspace/Class/src/main/resources/classrooms/"+course.getName().replaceAll(" ", "")+"/Student/Cours";
+  			String cours_path = ClassroomFolder.path+course.getName().replaceAll(" ", "")+"/Student/Cours";
     
 	  	        ListCourseWorkResponse works_response = service.courses().courseWork().list(course.getId()).execute();
 	  	        List<CourseWork> works = works_response.getCourseWork(); 
-  			String work_path = "/home/med/eclipse-workspace/Class/src/main/resources/classrooms/"+course.getName().replaceAll(" ", "")+"/Student/TD+TP";
+  			String work_path = ClassroomFolder.path+course.getName().replaceAll(" ", "")+"/Student/TD+TP";
   			
 	  	        try {
 					for (Announcement annonc : announcements) {

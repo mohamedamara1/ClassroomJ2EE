@@ -133,10 +133,10 @@ public class DownloadForTeacher extends HttpServlet {
 
     				
     				System.out.println("CLASSROOPM NAME = "+classroom_name);
-    				classrooms.add("/home/med/eclipse-workspace/Class/src/main/resources/classrooms/"+classroom_name);
+    				classrooms.add(ClassroomFolder.path+classroom_name);
     		        System.out.println("Course id : "+course_id);
 	
-    				String path = "/home/med/eclipse-workspace/Class/src/main/resources/classrooms/"+classroom_name;
+    				String path = ClassroomFolder.path+classroom_name;
     				
     				File course_folder = new File(path);
     		if (! course_folder.exists()) {
@@ -159,7 +159,7 @@ public class DownloadForTeacher extends HttpServlet {
 	    classrooms.toArray( myFiles );
 	    
 	    String zipname= Integer.toString(randomNum)+".zip";
-        String zipFile= "/home/med/eclipse-workspace/Class/src/main/resources/classrooms/"+zipname;
+        String zipFile= ClassroomFolder.path+zipname;
 	    
         
 	    ZipUtilityTeacher.zip(myFiles, zipFile);
@@ -182,7 +182,7 @@ public class DownloadForTeacher extends HttpServlet {
         for (StudentSubmission submission : submissions){
             String student_name = classroom_service.courses().students().get(course_id, submission.getUserId()).execute().getProfile().getName().getFullName();
             System.out.println("STUDENT NAME = "+student_name);
-         File   student_folder =new File("/home/med/eclipse-workspace/Class/src/main/resources/classrooms/"+course_name.replaceAll(" ", "")+"/Teacher/"+work_name+"/"+student_name);
+         File   student_folder =new File(ClassroomFolder.path+course_name.replaceAll(" ", "")+"/Teacher/"+work_name+"/"+student_name);
          System.out.println(student_folder.getPath());
             if (! student_folder.exists()) {
                 student_folder.mkdirs(); 
