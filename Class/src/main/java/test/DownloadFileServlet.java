@@ -121,7 +121,7 @@ public class DownloadFileServlet extends HttpServlet {
 			try {
 			String	classroom_name = DbUtil.get_classroom_name(course_id).replaceAll(" ", "");
 				System.out.println("CLASSROOPM NAME = "+classroom_name);
-				classrooms.add("/home/med/eclipse-workspace/Class/src/main/resources/classrooms/"+classroom_name);
+				classrooms.add(ClassroomFolder.path+classroom_name);
 
 			} catch (InstantiationException | IllegalAccessException | ClassNotFoundException | SQLException e) {
 				// TODO Auto-generated catch block
@@ -135,7 +135,7 @@ public class DownloadFileServlet extends HttpServlet {
 	    classrooms.toArray( myFiles );
 	    
 	    String zipname= Integer.toString(randomNum)+".zip";
-        String zipFile= "/home/med/eclipse-workspace/Class/src/main/resources/classrooms/"+zipname;
+        String zipFile= ClassroomFolder.path+zipname;
 	    
         
 	    ZipUtility.zip(myFiles, zipFile);
@@ -163,7 +163,7 @@ public class DownloadFileServlet extends HttpServlet {
         
 		Course course = service.courses().get(course_id).execute();
 		
-		String path = "/home/med/eclipse-workspace/Class/src/main/resources/classrooms/"+course.getName().replaceAll(" ", "");
+		String path = ClassroomFolder.path+course.getName().replaceAll(" ", "");
 		
 		File course_folder = new File(path);
 		
@@ -215,7 +215,7 @@ public class DownloadFileServlet extends HttpServlet {
      public void download_announcements(List<Announcement> announcements, String course_name,String course_id, Credential credential) throws NullPointerException, IOException, ServletException, InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException{
 
  		System.out.println("Downloading course work...");
- 		String path = "/home/med/eclipse-workspace/Class/src/main/resources/classrooms/"+course_name.replaceAll(" ", "")+"/Student/Cours";
+ 		String path = ClassroomFolder.path+course_name.replaceAll(" ", "")+"/Student/Cours";
 
          Drive drive_service = new Drive.Builder(new NetHttpTransport(), new GsonFactory(), credential)
                  .setApplicationName("testing haha")
@@ -248,7 +248,7 @@ public class DownloadFileServlet extends HttpServlet {
 	private  void download_works(List<CourseWork> works, String course_name, String course_id,Credential credential) throws IOException, ServletException, InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
 		// TODO Auto-generated method stub
 		System.out.println("Downloading course work...");
-		String path = "/home/med/eclipse-workspace/Class/src/main/resources/classrooms/"+course_name.replaceAll(" ", "")+"/Student/TD+TP";
+		String path = ClassroomFolder.path+course_name.replaceAll(" ", "")+"/Student/TD+TP";
 	//	Credential credential = InitializeFlowTool.initializeFlow().loadCredential("123456");
 
         Drive drive_service = new Drive.Builder(new NetHttpTransport(), new GsonFactory(), credential)
